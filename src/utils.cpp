@@ -1,9 +1,7 @@
-#include <Arduino.h>
 #include "utils.h"
 #include "main.h"
 
-
-void debug(String str)
+void debug(const String str)
 {
 #ifdef DEBUG
   Serial.println(str);
@@ -17,12 +15,23 @@ void debug(const char *str)
 #endif
 }
 
-
-void blink()
+void debug(int str)
 {
-  int del = 1001;
+#ifdef DEBUG
+  Serial.println(str);
+#endif
+}
+
+
+void blink(int del)
+{
   digitalWrite(LED_BUILTIN, HIGH);
   delay(del);
   digitalWrite(LED_BUILTIN, LOW);
   delay(del);
+}
+
+void say_hello()
+{
+  debug("Hello World!");
 }

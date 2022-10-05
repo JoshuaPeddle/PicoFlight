@@ -146,7 +146,7 @@ void IBusBM::begin(HardwareSerial &serial, int8_t timerid, int8_t rxPin, int8_t 
         NRF_TIMER4->TASKS_START = 1;      // Start TIMER2
       #else
         // It should not be too difficult to support additional architectures as most have timer functions, but I only tested AVR and ESP32
-        #warning "Timing only supportted for AVR, ESP32 and STM32 architectures. Use timerid IBUSBM_NOTIMER"
+        //#warning "Timing only supportted for AVR, ESP32 and STM32 architectures. Use timerid IBUSBM_NOTIMER"
       #endif
     #endif
   }

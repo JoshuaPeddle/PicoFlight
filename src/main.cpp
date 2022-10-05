@@ -1,30 +1,27 @@
-#include <Arduino.h>
 #include "main.h"
 
-#define IBUSBM_NOTIMER 1 // no timer interrupt used
-#include <IBusBM.h>
+Servo servo_0;
+Servo servo_1;
+Servo servo_2;
+Servo servo_3;
+Servo servo_4;
+Servo servo_5;
+
 IBusBM IBus;
-
-#define ADAFRUIT_SENSOR_CALIBRATION_USE_EEPROM 1
-#include <Adafruit_Sensor_Calibration.h>
-#include <Adafruit_AHRS.h>
-
-Adafruit_Sensor *accelerometer, *gyroscope, *magnetometer;
-
+Ibus_data ibus_data;
 // 9 DOF SENSOR and AHRS
-Adafruit_Sensor_Calibration_EEPROM cal;
-
-#include <Adafruit_LSM9DS1.h>
 Adafruit_LSM9DS1 lsm9ds1 = Adafruit_LSM9DS1();
+
+Adafruit_Sensor_Calibration_EEPROM cal;
 
 // Adafruit_NXPSensorFusion filter; // slowest
 // Adafruit_Madgwick filter;  // faster than NXP
 Adafruit_Mahony filter; // fastest/smalleset
 
+uint32_t timestamp;
 void setup()
 {
   Serial.begin(115200);
-
   while (!Serial)
   {
     delay(10);
@@ -32,8 +29,10 @@ void setup()
 
   delay(1000); // Delay to wait for board to stabilize
   debug("Begin setup");
-  
+
   pinMode(LED_BUILTIN, OUTPUT); // Setup pins
+
+  Serial1.setRX(1);
 
   IBus.begin(Serial1, IBUSBM_NOTIMER); // iBUS connected to Serial1 RX pin
   debug("IBus started");
@@ -41,98 +40,65 @@ void setup()
   start_calibration_engine();
   debug("Calibration Engine started");
 
+  filter.begin(FILTER_UPDATE_RATE_HZ);
+  debug("Filter started");
+
+  debug("starting lsm9ds1");
+  if (init_sensors())
+  {
+    setup_sensors();
+    debug("lsm9ds1 started");
+  }
+  else
+  {
+    debug("lsm9ds1 failed to start");
+  }
+
+  debug("Attch servos");
+  servo_0.attach(2); // attaches the servo on GIO2 to the servo object
+  servo_1.attach(4); // attaches the servo on GIO2 to the servo object
+  servo_2.attach(6); // attaches the servo on GIO2 to the servo object
+  servo_3.attach(8); // attaches the servo on GIO2 to the servo object
+  servo_3.attach(10); // attaches the servo on GIO2 to the servo object
+
+  timestamp = millis();
   debug("Finished setup");
 }
 
+int j = 0;
+unsigned long last_time = 0;
 void loop()
 {
-  blink();
-  IBus.loop();
-  readIbus();
-  debug("loop");
-}
-
-void readIbus()
-{
-  int val;
-  val = IBus.readChannel(0);
-  debug(String("Channel 0: " + String(val)));
-}
-
-bool init_sensors(void)
-{
-  if (!lsm9ds1.begin())
+  check_button(); // HELD, NO_PRESS, SHORT_PRESS, LONG_PRESS(LONG_PRESS_MS), PRESS
+  if (readIbus())
   {
-    return false;
+    // New ibus data. Update servos.
+    update_servo_positions();
   }
-  accelerometer = &lsm9ds1.getAccel();
-  gyroscope = &lsm9ds1.getGyro();
-  magnetometer = &lsm9ds1.getMag();
 
-  return true;
-}
+  IBus.loop(); // Must be called once a loop
 
-void setup_sensors(void)
-{
-  // set lowest range
-  lsm9ds1.setupAccel(lsm9ds1.LSM9DS1_ACCELRANGE_2G);
-  lsm9ds1.setupMag(lsm9ds1.LSM9DS1_MAGGAIN_4GAUSS);
-  lsm9ds1.setupGyro(lsm9ds1.LSM9DS1_GYROSCALE_245DPS);
-}
-
-void start_calibration_engine()
-{
-  Serial.println("Calibration filesys test");
-  if (!cal.begin())
+#ifdef DEBUG_TIME
+  if (millis() > last_time + 1000)
   {
-    Serial.println("Failed to initialize calibration helper");
-    while (1)
-      yield();
-  }
-  if (!cal.loadCalibration())
-  {
-    Serial.println("No calibration loaded/found... will start calibration");
-    calibrate();
+    last_time = millis();
+    debug((int)(j / 1000));
+    j = 0;
   }
   else
   {
-    Serial.println("Loaded existing calibration");
+    j++;
   }
+#endif
 }
 
-void calibrate()
+void update_servo_positions()
 {
-  Serial.println("**WARNING** Fake calibration");
-  cal.accel_zerog[0] = 0;
-  cal.accel_zerog[1] = 0;
-  cal.accel_zerog[2] = 0;
-
-  cal.gyro_zerorate[0] = 0;
-  cal.gyro_zerorate[1] = 0;
-  cal.gyro_zerorate[2] = 0;
-
-  cal.mag_hardiron[0] = 0;
-  cal.mag_hardiron[1] = 0;
-  cal.mag_hardiron[2] = 0;
-
-  cal.mag_field = 0;
-
-  cal.mag_softiron[0] = 0;
-  cal.mag_softiron[1] = 0;
-  cal.mag_softiron[2] = 0;
-  cal.mag_softiron[3] = 0;
-  cal.mag_softiron[4] = 0;
-  cal.mag_softiron[5] = 0;
-  cal.mag_softiron[6] = 0;
-  cal.mag_softiron[7] = 0;
-  cal.mag_softiron[8] = 0;
-  if (!cal.saveCalibration())
-  {
-    Serial.println("**WARNING** Couldn't save calibration");
-  }
-  else
-  {
-    Serial.println("Wrote calibration");
-  }
-  cal.printSavedCalibration();
+  //debug("Updating servo positions");
+  servo_0.write(ibus_data.c_1);
+  servo_1.write(ibus_data.c_2);
+  servo_2.write(ibus_data.c_3);
+  servo_3.write(ibus_data.c_4);
+  servo_4.write(ibus_data.c_5);
+  servo_5.write(ibus_data.c_6);
 }
