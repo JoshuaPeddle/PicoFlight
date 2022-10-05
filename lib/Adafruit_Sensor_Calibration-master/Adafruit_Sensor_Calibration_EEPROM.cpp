@@ -1,6 +1,6 @@
 #include "Adafruit_Sensor_Calibration.h"
 
-#if defined(ADAFRUIT_SENSOR_CALIBRATION_USE_EEPROM)
+#include "Adafruit_Sensor_Calibration_EEPROM.h"
 
 /**************************************************************************/
 /*!
@@ -8,17 +8,19 @@
     @returns False if any failure to initialize flash or filesys
 */
 /**************************************************************************/
-bool Adafruit_Sensor_Calibration_EEPROM::begin(uint8_t eeprom_addr) {
+bool Adafruit_Sensor_Calibration_EEPROM::begin(uint8_t eeprom_addr)
+{
   ee_addr = eeprom_addr;
 
-#if defined(ESP8266) || defined(ESP32)
+  //#if defined(ESP8266) || defined(ESP32)
   EEPROM.begin(512);
-#endif
+  //#endif
 
   return true;
 }
 
-bool Adafruit_Sensor_Calibration_EEPROM::saveCalibration(void) {
+bool Adafruit_Sensor_Calibration_EEPROM::saveCalibration(void)
+{
   Serial.println("Save Cal");
 
   uint8_t buf[EEPROM_CAL_SIZE];
@@ -43,7 +45,8 @@ bool Adafruit_Sensor_Calibration_EEPROM::saveCalibration(void) {
   memcpy(buf + 2, offsets, 16 * 4);
 
   uint16_t crc = 0xFFFF;
-  for (uint16_t i = 0; i < EEPROM_CAL_SIZE - 2; i++) {
+  for (uint16_t i = 0; i < EEPROM_CAL_SIZE - 2; i++)
+  {
     crc = crc16_update(crc, buf[i]);
   }
   Serial.print("CRC: ");
@@ -51,26 +54,35 @@ bool Adafruit_Sensor_Calibration_EEPROM::saveCalibration(void) {
   buf[EEPROM_CAL_SIZE - 2] = crc & 0xFF;
   buf[EEPROM_CAL_SIZE - 1] = crc >> 8;
 
-  for (uint16_t a = 0; a < EEPROM_CAL_SIZE; a++) {
+  for (uint16_t a = 0; a < EEPROM_CAL_SIZE; a++)
+  {
     EEPROM.write(a + ee_addr, buf[a]);
   }
 
-#if defined(ESP8266) || defined(ESP32)
-  EEPROM.commit();
-#endif
+  if (EEPROM.commit())
+  {
+    Serial.println("EEPROM successfully committed");
+  }
+  else
+  {
+    Serial.println("ERROR! EEPROM commit failed");
+  }
   return true;
 }
 
-bool Adafruit_Sensor_Calibration_EEPROM::loadCalibration(void) {
+bool Adafruit_Sensor_Calibration_EEPROM::loadCalibration(void)
+{
   uint8_t buf[EEPROM_CAL_SIZE];
 
   uint16_t crc = 0xFFFF;
-  for (uint16_t a = 0; a < EEPROM_CAL_SIZE; a++) {
+  for (uint16_t a = 0; a < EEPROM_CAL_SIZE; a++)
+  {
     buf[a] = EEPROM.read(a + ee_addr);
     crc = crc16_update(crc, buf[a]);
   }
 
-  if (crc != 0 || buf[0] != 0x75 || buf[1] != 0x54) {
+  if (crc != 0 || buf[0] != 0x75 || buf[1] != 0x54)
+  {
     Serial.print("CRC: ");
     Serial.println(crc, HEX);
     return false;
@@ -105,21 +117,22 @@ bool Adafruit_Sensor_Calibration_EEPROM::loadCalibration(void) {
   return true;
 }
 
-bool Adafruit_Sensor_Calibration_EEPROM::printSavedCalibration(void) {
+bool Adafruit_Sensor_Calibration_EEPROM::printSavedCalibration(void)
+{
   Serial.println(F("------------"));
-  for (uint16_t a = ee_addr; a < ee_addr + EEPROM_CAL_SIZE; a++) {
+  for (uint16_t a = ee_addr; a < ee_addr + EEPROM_CAL_SIZE; a++)
+  {
     uint8_t c = EEPROM.read(a);
     Serial.print("0x");
     if (c < 0x10)
       Serial.print('0');
     Serial.print(c, HEX);
     Serial.print(", ");
-    if ((a - ee_addr) % 16 == 15) {
+    if ((a - ee_addr) % 16 == 15)
+    {
       Serial.println();
     }
   }
   Serial.println(F("\n------------"));
   return true;
 }
-
-#endif

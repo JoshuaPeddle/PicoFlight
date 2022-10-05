@@ -3,7 +3,6 @@
 
 #include "Adafruit_Sensor_Calibration.h"
 
-#if defined(ADAFRUIT_SENSOR_CALIBRATION_USE_EEPROM)
 
 #include <EEPROM.h>
 
@@ -25,4 +24,3 @@ private:
 
 #endif
 
-#endif // include once
