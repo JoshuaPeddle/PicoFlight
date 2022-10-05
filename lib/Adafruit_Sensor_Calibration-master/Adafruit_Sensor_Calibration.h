@@ -57,8 +57,5 @@ public:
 #include "Adafruit_Sensor_Calibration_EEPROM.h"
 #endif
 
-#ifdef ADAFRUIT_SENSOR_CALIBRATION_USE_SDFAT
-#include "Adafruit_Sensor_Calibration_SDFat.h"
-#endif
 
 #endif
