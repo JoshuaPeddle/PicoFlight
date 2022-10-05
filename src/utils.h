@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#include "main.h"
 
 void debug(const char *str);
 

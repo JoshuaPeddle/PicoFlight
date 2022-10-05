@@ -1,9 +1,11 @@
 
 #include <Arduino.h>
+
 #define DEBUG
 #define DEBUG_TIME // used for debugging time for loop
 
 #include <Servo.h>
+
 extern Servo servo_0;  // create servo object to control a servo
 extern Servo servo_1;  // create servo object to control a servo
 extern Servo servo_2;  // create servo object to control a servo
@@ -35,7 +37,6 @@ extern IBusBM IBus;
 #include <Adafruit_AHRS.h>
 #include <Adafruit_LSM9DS1.h>
 
-#include "utils.h"
 extern Adafruit_Sensor *accelerometer, *gyroscope, *magnetometer;
 
 extern Adafruit_LSM9DS1 lsm9ds1;
