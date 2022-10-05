@@ -1,22 +1,68 @@
 #include <Arduino.h>
+#include "main.h"
 
-// IBUS communication
-#include <IBusBM.h>
 #define IBUSBM_NOTIMER 1 // no timer interrupt used
-IBusBM IBus; // IBus object
+#include <IBusBM.h>
+IBusBM IBus;
 
-
-
-// 9 DOF SENSOR
+#define ADAFRUIT_SENSOR_CALIBRATION_USE_EEPROM 1
 #include <Adafruit_Sensor_Calibration.h>
 #include <Adafruit_AHRS.h>
 
 Adafruit_Sensor *accelerometer, *gyroscope, *magnetometer;
+
+// 9 DOF SENSOR and AHRS
+Adafruit_Sensor_Calibration_EEPROM cal;
+
 #include <Adafruit_LSM9DS1.h>
 Adafruit_LSM9DS1 lsm9ds1 = Adafruit_LSM9DS1();
 
-bool init_sensors(void) {
-  if (!lsm9ds1.begin()) {
+// Adafruit_NXPSensorFusion filter; // slowest
+// Adafruit_Madgwick filter;  // faster than NXP
+Adafruit_Mahony filter; // fastest/smalleset
+
+void setup()
+{
+  Serial.begin(115200);
+
+  while (!Serial)
+  {
+    delay(10);
+  }
+
+  delay(1000); // Delay to wait for board to stabilize
+  debug("Begin setup");
+  
+  pinMode(LED_BUILTIN, OUTPUT); // Setup pins
+
+  IBus.begin(Serial1, IBUSBM_NOTIMER); // iBUS connected to Serial1 RX pin
+  debug("IBus started");
+
+  start_calibration_engine();
+  debug("Calibration Engine started");
+
+  debug("Finished setup");
+}
+
+void loop()
+{
+  blink();
+  IBus.loop();
+  readIbus();
+  debug("loop");
+}
+
+void readIbus()
+{
+  int val;
+  val = IBus.readChannel(0);
+  debug(String("Channel 0: " + String(val)));
+}
+
+bool init_sensors(void)
+{
+  if (!lsm9ds1.begin())
+  {
     return false;
   }
   accelerometer = &lsm9ds1.getAccel();
@@ -26,43 +72,67 @@ bool init_sensors(void) {
   return true;
 }
 
-void setup_sensors(void) {
+void setup_sensors(void)
+{
   // set lowest range
   lsm9ds1.setupAccel(lsm9ds1.LSM9DS1_ACCELRANGE_2G);
   lsm9ds1.setupMag(lsm9ds1.LSM9DS1_MAGGAIN_4GAUSS);
   lsm9ds1.setupGyro(lsm9ds1.LSM9DS1_GYROSCALE_245DPS);
 }
 
-Adafruit_LSM9DS1 lsm9ds = Adafruit_LSM9DS1();
-
-//Adafruit_NXPSensorFusion filter; // slowest
-//Adafruit_Madgwick filter;  // faster than NXP
-Adafruit_Mahony filter;  // fastest/smalleset
-
-
-
-
-
-
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(115200);
-  pinMode(LED_BUILTIN, OUTPUT);
-  IBus.begin(Serial1, IBUSBM_NOTIMER);    // iBUS object connected to serial0 RX pin
+void start_calibration_engine()
+{
+  Serial.println("Calibration filesys test");
+  if (!cal.begin())
+  {
+    Serial.println("Failed to initialize calibration helper");
+    while (1)
+      yield();
+  }
+  if (!cal.loadCalibration())
+  {
+    Serial.println("No calibration loaded/found... will start calibration");
+    calibrate();
+  }
+  else
+  {
+    Serial.println("Loaded existing calibration");
+  }
 }
 
-void blink() {
-  int del = 1001;
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(del);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(del);
-}
+void calibrate()
+{
+  Serial.println("**WARNING** Fake calibration");
+  cal.accel_zerog[0] = 0;
+  cal.accel_zerog[1] = 0;
+  cal.accel_zerog[2] = 0;
 
-void loop() {
-  blink();
+  cal.gyro_zerorate[0] = 0;
+  cal.gyro_zerorate[1] = 0;
+  cal.gyro_zerorate[2] = 0;
 
-  IBus.loop();
-  int val;
-  val = IBus.readChannel(0); // get latest value for servo channel 1
+  cal.mag_hardiron[0] = 0;
+  cal.mag_hardiron[1] = 0;
+  cal.mag_hardiron[2] = 0;
+
+  cal.mag_field = 0;
+
+  cal.mag_softiron[0] = 0;
+  cal.mag_softiron[1] = 0;
+  cal.mag_softiron[2] = 0;
+  cal.mag_softiron[3] = 0;
+  cal.mag_softiron[4] = 0;
+  cal.mag_softiron[5] = 0;
+  cal.mag_softiron[6] = 0;
+  cal.mag_softiron[7] = 0;
+  cal.mag_softiron[8] = 0;
+  if (!cal.saveCalibration())
+  {
+    Serial.println("**WARNING** Couldn't save calibration");
+  }
+  else
+  {
+    Serial.println("Wrote calibration");
+  }
+  cal.printSavedCalibration();
 }
