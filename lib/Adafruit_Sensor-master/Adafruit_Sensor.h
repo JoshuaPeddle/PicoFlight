@@ -184,7 +184,7 @@ public:
   void printSensorDetails(void);
 
 private:
-  bool _autoRange;
+  bool _autoRange= false;
 };
 
 #endif
