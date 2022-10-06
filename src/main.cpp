@@ -22,11 +22,12 @@ uint32_t timestamp;
 void setup()
 {
   Serial.begin(115200);
+#ifdef DEBUG
   while (!Serial)
   {
     delay(10);
   }
-
+#endif
   delay(1000); // Delay to wait for board to stabilize
   debug("Begin setup");
 
@@ -55,10 +56,10 @@ void setup()
   }
 
   debug("Attch servos");
-  servo_0.attach(2); // attaches the servo on GIO2 to the servo object
-  servo_1.attach(4); // attaches the servo on GIO2 to the servo object
-  servo_2.attach(6); // attaches the servo on GIO2 to the servo object
-  servo_3.attach(8); // attaches the servo on GIO2 to the servo object
+  servo_0.attach(2);  // attaches the servo on GIO2 to the servo object
+  servo_1.attach(4);  // attaches the servo on GIO2 to the servo object
+  servo_2.attach(6);  // attaches the servo on GIO2 to the servo object
+  servo_3.attach(8);  // attaches the servo on GIO2 to the servo object
   servo_3.attach(10); // attaches the servo on GIO2 to the servo object
 
   timestamp = millis();
@@ -94,7 +95,7 @@ void loop()
 
 void update_servo_positions()
 {
-  //debug("Updating servo positions");
+  // debug("Updating servo positions");
   servo_0.write(ibus_data.c_1);
   servo_1.write(ibus_data.c_2);
   servo_2.write(ibus_data.c_3);
