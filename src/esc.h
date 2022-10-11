@@ -11,8 +11,7 @@ extern Servo motor;
 #define MINIMUM_INPUT_PULSE 1000
 #define MAXIMUM_INPUT_PULSE 2000
 
-void set_esc_pulse(short pulse);
-void set_esc_percent(float percent);
+
 int improved_map2(int value, int minIn, int maxIn, int minOut, int maxOut);
 int improved_map(int value);
 
@@ -21,8 +20,9 @@ class ESC
 {
 
 public:
+    ESC();
     ESC(int pin);
-    void set_esc_pulse(short pulse);
-
+    int set_esc_pulse(int pulse);
     void set_esc_percent(float percent);
+
 };

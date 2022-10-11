@@ -2,7 +2,44 @@
 #include <IBusBM.h>
 
 
-extern struct Ibus_data ibus_data;
+
+struct Ibus_data 
+{
+    uint16_t c_1 = 0;
+    uint16_t c_2 = 0;
+    uint16_t c_3 = 0;
+    uint16_t c_4 = 0;
+    uint16_t c_5 = 0;
+    uint16_t c_6 = 0;
+    int get_channel_value(int channel)
+    {
+        switch (channel)
+        {
+        case 1:
+            return this->c_1;
+            break;
+        case 2:
+            return this->c_2;
+            break;
+        case 3:
+            return this->c_3;
+            break;
+        case 4:
+            return this->c_4;
+            break;
+        case 5:
+            return this->c_5;
+            break;
+        case 6:
+            return this->c_6;
+            break;
+        default:
+            return 0;
+            break;
+        }
+    };
+} ibus_data;
+
 
 
 bool data_updated(const Ibus_data& received, const Ibus_data& old)
@@ -50,4 +87,22 @@ bool readIbus()
 
   last_ibus_print = millis();
   return updated;
+}
+
+
+void handle_ibus_update()
+{
+    //debug("IBUS updated");
+    elevator.writeMicroseconds(ibus_data.get_channel_value(ELEVATOR_IBUS_CHANNEL));
+#ifdef DUAL_AILERON
+    left_aileron.writeMicroseconds(ibus_data.get_channel_value(LEFT_AILERON_IBUS_CHANNEL));
+    right_aileron.writeMicroseconds(ibus_data.get_channel_value(RIGHT_AILERON_IBUS_CHANNEL));
+#else
+    aileron.writeMicroseconds(ibus_data.get_channel_value(AILERON_IBUS_CHANNEL));
+#endif
+    rudder.writeMicroseconds(ibus_data.get_channel_value(RUDDER_IBUS_CHANNEL));
+
+    esc.set_esc_pulse((short)ibus_data.get_channel_value(THROTTLE_IBUS_CHANNEL));
+    //debug(res);
+    //debug(ibus_data.get_channel_value(THROTTLE_IBUS_CHANNEL));
 }
