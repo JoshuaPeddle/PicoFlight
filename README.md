@@ -8,16 +8,16 @@ https://i0.wp.com/peppe8o.com/wp-content/uploads/2021/05/raspberry-pi-pico-pinou
 Configure pins in pins.h
 
 Implemented features:
-ESC support (connections to 1 ESC)
-Servo support (connections to Elevator, Aileron(Single and Dual), Rudder, Thrust)
-IBUS support (connections to FlySky RC Receivers)
-9DOF IMU Support (only lsm6ds1 supported, data is not used)
-AHRS support (mahoney, madgwick and NXP fusion solutions)
+- ESC support (connections to 1 ESC motor combo)
+- Servo support (connections to Elevator, Aileron(Single and Dual), Rudder, Thrust)
+- IBUS support (connections to FlySky RC Receivers)
+- 9DOF IMU Support (only lsm6ds1 supported, data is not used)
+- AHRS support (mahoney, madgwick and NXP fusion solutions)
 
 
 TODO (In rough order):
-Flight stabilization using PID system with AHRS
-GPS support
+- Flight stabilization using PID system with AHRS
+- GPS support
 
 
 
@@ -25,5 +25,5 @@ GPS support
 
 
 Supported targets:
-Raspberry Pi Pico (using earlephilhower/arduino-pico library)
+- Raspberry Pi Pico (using earlephilhower/arduino-pico library)
 
