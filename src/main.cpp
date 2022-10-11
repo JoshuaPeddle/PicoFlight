@@ -1,11 +1,15 @@
 #include "main.h"
 
-Servo servo_0;
-Servo servo_1;
-Servo servo_2;
-Servo servo_3;
-Servo servo_4;
-Servo servo_5;
+ESC esc(THROTTLE_PIN);
+
+Servo elevator;
+#ifdef DUAL_AILERON
+Servo left_aileron;
+Servo right_aileron;
+#else
+Servo aileron;
+#endif
+Servo rudder;
 
 IBusBM IBus;
 Ibus_data ibus_data;
@@ -32,8 +36,7 @@ void setup()
   debug("Begin setup");
 
   pinMode(LED_BUILTIN, OUTPUT); // Setup pins
-
-  Serial1.setRX(1);
+  Serial1.setRX(IBUS_RX_PIN);
 
   IBus.begin(Serial1, IBUSBM_NOTIMER); // iBUS connected to Serial1 RX pin
   debug("IBus started");
@@ -56,11 +59,14 @@ void setup()
   }
 
   debug("Attch servos");
-  servo_0.attach(2);  // attaches the servo on GIO2 to the servo object
-  servo_1.attach(4);  // attaches the servo on GIO2 to the servo object
-  servo_2.attach(6);  // attaches the servo on GIO2 to the servo object
-  servo_3.attach(8);  // attaches the servo on GIO2 to the servo object
-  servo_3.attach(10); // attaches the servo on GIO2 to the servo object
+  elevator.attach(ELEVATOR_PIN);
+#ifdef DUAL_AILERON
+  left_aileron.attach(LEFT_AILERON_PIN);
+  right_aileron.attach(RIGHT_AILERON_PIN);
+#else
+  Servo aileron.attach(AILERON_PIN);
+#endif
+  rudder.attach(RUDDER_PIN);
 
   timestamp = millis();
   debug("Finished setup");
@@ -73,8 +79,8 @@ void loop()
   check_button(); // HELD, NO_PRESS, SHORT_PRESS, LONG_PRESS(LONG_PRESS_MS), PRESS
   if (readIbus())
   {
-    // New ibus data. Update servos.
-    update_servo_positions();
+    // New ibus data. Update servos and esc
+    handle_ibus_update();
   }
 
   IBus.loop(); // Must be called once a loop
@@ -93,13 +99,14 @@ void loop()
 #endif
 }
 
-void update_servo_positions()
+void handle_ibus_update()
 {
+
   // debug("Updating servo positions");
-  servo_0.write(ibus_data.c_1);
-  servo_1.write(ibus_data.c_2);
-  servo_2.write(ibus_data.c_3);
-  servo_3.write(ibus_data.c_4);
-  servo_4.write(ibus_data.c_5);
-  servo_5.write(ibus_data.c_6);
+  // servo_0.write(ibus_data.c_1);
+  // servo_1.write(ibus_data.c_2);
+  // servo_2.write(ibus_data.c_3);
+  // servo_3.write(ibus_data.c_4);
+  // servo_4.write(ibus_data.c_5);
+  // servo_5.write(ibus_data.c_6);
 }

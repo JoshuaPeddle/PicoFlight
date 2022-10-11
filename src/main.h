@@ -1,17 +1,26 @@
 
+#pragma once
 #include <Arduino.h>
+#include "pins.h"
+
 
 #define DEBUG
 #define DEBUG_TIME // used for debugging time for loop
 
-#include <Servo.h>
 
-extern Servo servo_0; // create servo object to control a servo
-extern Servo servo_1; // create servo object to control a servo
-extern Servo servo_2; // create servo object to control a servo
-extern Servo servo_3; // create servo object to control a servo
-extern Servo servo_4; // create servo object to control a servo
-extern Servo servo_5; // create servo object to control a servo
+#include "esc.h"
+extern ESC esc;
+
+#include <Servo.h>
+extern Servo elevator;
+#ifdef DUAL_AILERON
+extern Servo left_aileron;
+extern Servo right_aileron;
+#else
+Servo aileron;
+#endif
+extern Servo rudder;
+
 
 // Button defines
 #define DELAY_BETWEEN_CHECKS 100
@@ -71,7 +80,7 @@ void say_hello();
 
 int check_button();
 
-void update_servo_positions();
+void handle_ibus_update();
 
 void debug(const String str);
 
