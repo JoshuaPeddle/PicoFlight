@@ -1,6 +1,6 @@
 #include "main.h"
 
-ESC esc(THROTTLE_PIN);
+ESC esc;
 
 Servo elevator;
 #ifdef DUAL_AILERON
@@ -12,7 +12,7 @@ Servo aileron;
 Servo rudder;
 
 IBusBM IBus;
-Ibus_data ibus_data;
+
 // 9 DOF SENSOR and AHRS
 Adafruit_LSM9DS1 lsm9ds1 = Adafruit_LSM9DS1();
 
@@ -68,6 +68,13 @@ void setup()
 #endif
   rudder.attach(RUDDER_PIN);
 
+  debug("Attach ESC");
+  esc = ESC(THROTTLE_PIN);
+  esc.set_esc_pulse(1000);
+  delay(500);
+
+
+
   timestamp = millis();
   debug("Finished setup");
 }
@@ -99,14 +106,3 @@ void loop()
 #endif
 }
 
-void handle_ibus_update()
-{
-
-  // debug("Updating servo positions");
-  // servo_0.write(ibus_data.c_1);
-  // servo_1.write(ibus_data.c_2);
-  // servo_2.write(ibus_data.c_3);
-  // servo_3.write(ibus_data.c_4);
-  // servo_4.write(ibus_data.c_5);
-  // servo_5.write(ibus_data.c_6);
-}

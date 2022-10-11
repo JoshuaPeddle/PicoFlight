@@ -3,19 +3,25 @@
 
 Servo motor;
 
+ESC::ESC(){}
+
 ESC::ESC(int pin)
 {
     motor.attach(pin);
 }
 
-void ESC::set_esc_pulse(short pulse)
+int ESC::set_esc_pulse(int pulse)
 {
     if (pulse < MINIMUM_INPUT_PULSE || pulse > MAXIMUM_INPUT_PULSE)
         Serial.println("[ERROR] Invalid value for pulse in set_esc_pulse");
-        return ;
+        return -1 ;
+    //Serial.println("writing pulse");
     motor.writeMicroseconds(improved_map(pulse));
+    //motor.writeMicroseconds(pulse);
+    return 1;
 }
 
+/// @param percent a float between 0 and 100 
 void ESC::set_esc_percent(float percent)
 {
     if (percent < 0 || percent > 100)
@@ -38,6 +44,7 @@ int improved_map2(int value, int minIn, int maxIn, int minOut, int maxOut) {
 
     return ((deltaIn * rangeOut * fixedDecimal) / (rangeIn) + fixedHalfDecimal) / fixedDecimal + minOut;
 }
+
 int improved_map(short value) {
     const int rangeIn = MAXIMUM_INPUT_PULSE - MINIMUM_INPUT_PULSE;
     const int rangeOut = MAXIMUM_SAFE_ESC_PULSE - MINIMUM_SAFE_ESC_PULSE;

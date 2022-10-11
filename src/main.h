@@ -3,10 +3,8 @@
 #include <Arduino.h>
 #include "pins.h"
 
-
 #define DEBUG
 #define DEBUG_TIME // used for debugging time for loop
-
 
 #include "esc.h"
 extern ESC esc;
@@ -20,7 +18,6 @@ extern Servo right_aileron;
 Servo aileron;
 #endif
 extern Servo rudder;
-
 
 // Button defines
 #define DELAY_BETWEEN_CHECKS 100
@@ -50,15 +47,8 @@ extern Adafruit_LSM9DS1 lsm9ds1;
 
 extern Adafruit_Sensor_Calibration_EEPROM cal;
 
-struct Ibus_data
-{
-    uint16_t c_1 = 0;
-    uint16_t c_2 = 0;
-    uint16_t c_3 = 0;
-    uint16_t c_4 = 0;
-    uint16_t c_5 = 0;
-    uint16_t c_6 = 0;
-};
+extern struct Ibus_data ibus_data;
+
 
 void setup();
 
