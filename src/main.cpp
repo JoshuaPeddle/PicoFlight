@@ -22,6 +22,9 @@ Adafruit_Sensor_Calibration_EEPROM cal;
 // Adafruit_Madgwick filter;  // faster than NXP
 Adafruit_Mahony filter; // fastest/smalleset
 
+NMEAGPS gps; // This parses the GPS characters
+gps_fix fix; // This holds on to the latest values
+
 uint32_t timestamp;
 void setup()
 {
@@ -73,16 +76,46 @@ void setup()
   esc.set_esc_pulse(1000);
   delay(500);
 
-
+  debug("Attach GPS");
+  gpsPort.begin(9600);
 
   timestamp = millis();
   debug("Finished setup");
 }
 
+unsigned long last_gps_check = 0; // When the last actual check of the buttons physical states was
+void check_gps()
+{
+  unsigned long now = millis();
+  if (now < last_gps_check + DELAY_BETWEEN_GPS_CHECKS)
+  {
+    return;
+  }
+  last_gps_check = now;
+  while (gps.available(gpsPort))
+  {
+    fix = gps.read();
+
+    debug(F("Location: "));
+    if (fix.valid.location)
+    {
+      Serial.println(fix.latitude(), 6);
+      debug(',');
+      Serial.println(fix.longitude(), 6);
+    }
+
+    debug(F(", Altitude: "));
+    if (fix.valid.altitude)
+      debug(fix.altitude());
+
+    debug("");
+  }
+}
 int j = 0;
 unsigned long last_time = 0;
 void loop()
 {
+  check_gps();
   check_button(); // HELD, NO_PRESS, SHORT_PRESS, LONG_PRESS(LONG_PRESS_MS), PRESS
   if (readIbus())
   {
@@ -105,4 +138,3 @@ void loop()
   }
 #endif
 }
-

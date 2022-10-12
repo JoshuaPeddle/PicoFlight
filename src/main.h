@@ -20,7 +20,7 @@ Servo aileron;
 extern Servo rudder;
 
 // Button defines
-#define DELAY_BETWEEN_CHECKS 100
+#define DELAY_BETWEEN_BUTTON_CHECKS 10
 #define LONG_PRESS_MS 1000
 #define NO_PRESS 0    // No button press
 #define SHORT_PRESS 1 // On release < LONG_PRESS_MS
@@ -40,6 +40,11 @@ extern IBusBM IBus;
 #include <Adafruit_Sensor_Calibration.h>
 #include <Adafruit_AHRS.h>
 #include <Adafruit_LSM9DS1.h>
+
+// GPS
+#include <GPSport.h>
+#include <NMEAGPS.h>
+#define DELAY_BETWEEN_GPS_CHECKS 10
 
 extern Adafruit_Sensor *accelerometer, *gyroscope, *magnetometer;
 

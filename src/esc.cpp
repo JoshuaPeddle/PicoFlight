@@ -12,9 +12,10 @@ ESC::ESC(int pin)
 
 int ESC::set_esc_pulse(int pulse)
 {
-    if (pulse < MINIMUM_INPUT_PULSE || pulse > MAXIMUM_INPUT_PULSE)
+    if (pulse < MINIMUM_INPUT_PULSE || pulse > MAXIMUM_INPUT_PULSE){
         Serial.println("[ERROR] Invalid value for pulse in set_esc_pulse");
         return -1 ;
+    }
     //Serial.println("writing pulse");
     motor.writeMicroseconds(improved_map(pulse));
     //motor.writeMicroseconds(pulse);
@@ -45,7 +46,7 @@ int improved_map2(int value, int minIn, int maxIn, int minOut, int maxOut) {
     return ((deltaIn * rangeOut * fixedDecimal) / (rangeIn) + fixedHalfDecimal) / fixedDecimal + minOut;
 }
 
-int improved_map(short value) {
+int improved_map(int value) {
     const int rangeIn = MAXIMUM_INPUT_PULSE - MINIMUM_INPUT_PULSE;
     const int rangeOut = MAXIMUM_SAFE_ESC_PULSE - MINIMUM_SAFE_ESC_PULSE;
     const int deltaIn = value - MINIMUM_INPUT_PULSE;
