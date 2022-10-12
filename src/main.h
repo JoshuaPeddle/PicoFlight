@@ -4,32 +4,15 @@
 #include "pins.h"
 #include "algebra.h"
 #include "utils.h"
+#include "servos.h"
+#include "ibus.h"
+#include "esc.h"
+#include "button.h"
 
 
 #define DEBUG
 #define DEBUG_TIME // used for debugging time for loop
 
-#include "esc.h"
-extern ESC esc;
-
-#include <Servo.h>
-extern Servo elevator;
-#ifdef DUAL_AILERON
-extern Servo left_aileron;
-extern Servo right_aileron;
-#else
-Servo aileron;
-#endif
-extern Servo rudder;
-
-// Button 
-#include "button.h"
-
-// IBUS receiver
-#define IBUSBM_NOTIMER 1              // no timer interrupt used
-#define TIME_BETWEEN_IBUS_PRINTS 1000 // How long to wait before debugging the IBUS receiver
-#include <IBusBM.h>
-extern IBusBM IBus;
 
 // 9 DOF SENSOR and AHRS
 #define ADAFRUIT_SENSOR_CALIBRATION_USE_EEPROM 1

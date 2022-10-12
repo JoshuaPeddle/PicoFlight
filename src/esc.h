@@ -6,6 +6,8 @@
 
 #include <Servo.h>
 
+
+
 extern Servo motor;
 
 #define MINIMUM_SAFE_ESC_PULSE 1000
@@ -29,5 +31,7 @@ public:
     void set_esc_percent(float percent);
 
 };
+
+extern ESC esc;
 
 #endif

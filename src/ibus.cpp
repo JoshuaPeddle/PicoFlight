@@ -1,5 +1,5 @@
-#include "main.h"
-#include <IBusBM.h>
+#include "ibus.h"
+
 
 
 
