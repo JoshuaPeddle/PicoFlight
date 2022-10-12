@@ -22,14 +22,8 @@ Servo aileron;
 #endif
 extern Servo rudder;
 
-// Button defines
-#define DELAY_BETWEEN_BUTTON_CHECKS 10
-#define LONG_PRESS_MS 1000
-#define NO_PRESS 0    // No button press
-#define SHORT_PRESS 1 // On release < LONG_PRESS_MS
-#define LONG_PRESS 2  // On release > LONG_PRESS_MS
-#define HELD 4        // Held down
-#define PRESS 5       // On initial press
+// Button 
+#include "button.h"
 
 // IBUS receiver
 #define IBUSBM_NOTIMER 1              // no timer interrupt used
@@ -76,7 +70,6 @@ void start_calibration_engine();
 
 void say_hello();
 
-int check_button();
 
 void handle_ibus_update();
 

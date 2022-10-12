@@ -10,4 +10,5 @@ void debug(int str);
 
 void blink(int del);
 
+void say_hello();
 #endif
