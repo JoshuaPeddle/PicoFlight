@@ -74,16 +74,9 @@ void calibrate();
 
 void start_calibration_engine();
 
-void blink(int del);
-
 void say_hello();
 
 int check_button();
 
 void handle_ibus_update();
 
-void debug(const String str);
-
-void debug(const char *str);
-
-void debug(int str);

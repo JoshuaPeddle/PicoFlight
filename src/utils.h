@@ -8,6 +8,6 @@ void debug(String str);
 
 void debug(int str);
 
-void blink();
+void blink(int del);
 
 #endif
