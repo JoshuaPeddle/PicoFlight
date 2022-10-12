@@ -2,6 +2,9 @@
 #pragma once
 #include <Arduino.h>
 #include "pins.h"
+#include "algebra.h"
+#include "utils.h"
+
 
 #define DEBUG
 #define DEBUG_TIME // used for debugging time for loop
@@ -45,6 +48,8 @@ extern IBusBM IBus;
 #include <GPSport.h>
 #include <NMEAGPS.h>
 #define DELAY_BETWEEN_GPS_CHECKS 10
+
+
 
 extern Adafruit_Sensor *accelerometer, *gyroscope, *magnetometer;
 

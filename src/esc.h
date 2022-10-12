@@ -1,6 +1,9 @@
-#ifndef Arduino_h
+
+#ifndef ESC_H
+#define ESC_H
+
 #include <Arduino.h>
-#endif
+
 #include <Servo.h>
 
 extern Servo motor;
@@ -26,3 +29,5 @@ public:
     void set_esc_percent(float percent);
 
 };
+
+#endif

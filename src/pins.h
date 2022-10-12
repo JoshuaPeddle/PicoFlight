@@ -1,4 +1,5 @@
-// Servo setup
+#ifndef PINS_H
+#define PINS_H
 
 
 #define DUAL_AILERON
@@ -31,3 +32,5 @@
 
 // IBUS receiver setup
 #define IBUS_RX_PIN 1
+
+#endif
