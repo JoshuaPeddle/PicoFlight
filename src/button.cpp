@@ -12,11 +12,11 @@ int last_button_state = 0;  // The last physical state of the button. Reported u
 /// @brief  Check the button state
 /// @return NO_PRESS = no press, SHORT_PRESS = short press, LONG_PRESS = long press (> LONG_PRESS_MS), HELD = held, PRESS = press
 int check_button(){
-
-    if (millis() < last_check + DELAY_BETWEEN_CHECKS){
+    unsigned long now = millis();
+    if (now < last_check + DELAY_BETWEEN_BUTTON_CHECKS){
         return last_button_state;
     }
-    last_check = millis();
+    last_check = now;
     if (!BOOTSEL && !bootsed_pressed){
         last_button_state = NO_PRESS;
         return NO_PRESS;

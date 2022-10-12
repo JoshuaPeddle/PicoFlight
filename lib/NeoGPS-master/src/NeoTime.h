@@ -292,7 +292,7 @@ protected:
 
 }; // namespace NeoGPS
 
-class Print;
+//class Print;
 
 /**
  * Print the date/time to the given stream with the format "YYYY-MM-DD HH:MM:SS".

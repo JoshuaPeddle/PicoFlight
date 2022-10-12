@@ -20,7 +20,7 @@
 
 #include "NeoGPS_cfg.h"
 #include <stdint.h>
-class Print;
+//class Print;
 
 enum Hemisphere_t { NORTH_H = 0, SOUTH_H = 1, EAST_H = 0, WEST_H = 1 };
 

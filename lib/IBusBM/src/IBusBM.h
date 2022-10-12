@@ -39,7 +39,7 @@
 //class HardwareSerial;
   #endif
 #endif
-class Stream;
+//class Stream;
 
 class IBusBM {
 
