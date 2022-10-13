@@ -1,9 +1,8 @@
-#include "main.h"
-
+#include "button.h"
 
 unsigned long initial_press = 0;
 
-bool bootsed_pressed = false; 
+bool bootsel_pressed = false; 
 
 unsigned long last_check=0; // When the last actual check of the buttons physical states was
 
@@ -17,23 +16,23 @@ int check_button(){
         return last_button_state;
     }
     last_check = now;
-    if (!BOOTSEL && !bootsed_pressed){
+    if (!BOOTSEL && !bootsel_pressed){
         last_button_state = NO_PRESS;
         return NO_PRESS;
     }
-    if (BOOTSEL && bootsed_pressed){
+    if (BOOTSEL && bootsel_pressed){
         last_button_state = HELD;
         return HELD;
     }
-    if (BOOTSEL && !bootsed_pressed){
-        bootsed_pressed=true;
+    if (BOOTSEL && !bootsel_pressed){
+        bootsel_pressed=true;
         initial_press=last_check;
         debug("PRESS");
         last_button_state = PRESS;
         return PRESS;
     }
-    if (!BOOTSEL && bootsed_pressed){
-        bootsed_pressed=false;
+    if (!BOOTSEL && bootsel_pressed){
+        bootsel_pressed=false;
         unsigned long release=last_check;
         if (release-initial_press>LONG_PRESS_MS){
             debug("Long press");
