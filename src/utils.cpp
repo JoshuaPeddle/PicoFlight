@@ -3,23 +3,23 @@
 
 void debug(const String str)
 {
-//#ifdef DEBUG
+#ifdef DEBUG
   Serial.println(str);
-//#endif
+#endif
 }
 
 void debug(const char *str)
 {
-//#ifdef DEBUG
+#ifdef DEBUG
   Serial.println(str);
-//#endif
+#endif
 }
 
 void debug(int str)
 {
-//#ifdef DEBUG
+#ifdef DEBUG
   Serial.println(str);
-//#endif
+#endif
 }
 
 

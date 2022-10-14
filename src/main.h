@@ -10,8 +10,6 @@
 #include "button.h"
 
 
-#define DEBUG
-#define DEBUG_TIME // used for debugging time for loop
 
 
 // 9 DOF SENSOR and AHRS

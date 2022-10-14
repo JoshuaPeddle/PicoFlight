@@ -1,7 +1,12 @@
 #ifndef PINS_H
 #define PINS_H
 
+// Shared defines
+#define DEBUG
+#define DEBUG_TIME // used for debugging time for loop
 
+
+// Pins
 #define DUAL_AILERON
 
 #ifdef DUAL_AILERON
