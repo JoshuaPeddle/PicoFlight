@@ -13,9 +13,6 @@ Servo rudder;
 
 IBusBM IBus;
 
-// 9 DOF SENSOR and AHRS
-Adafruit_LSM9DS1 lsm9ds1 = Adafruit_LSM9DS1();
-
 Adafruit_Sensor_Calibration_EEPROM cal;
 
 // Adafruit_NXPSensorFusion filter; // slowest
@@ -117,6 +114,8 @@ void check_gps()
     debug("");
   }
 }
+
+
 unsigned long last_print = 0;
 sensors_event_t accel, mag, gyro, temp;
 void dump_pos(){
