@@ -24,7 +24,7 @@
 // GPS
 #include <GPSport.h>
 #include <NMEAGPS.h>
-#define DELAY_BETWEEN_GPS_CHECKS 10
+#define DELAY_BETWEEN_GPS_CHECKS 50
 
 
 
@@ -33,8 +33,6 @@ extern Adafruit_Sensor *accelerometer, *gyroscope, *magnetometer;
 extern Adafruit_LSM9DS1 lsm9ds1;
 
 extern Adafruit_Sensor_Calibration_EEPROM cal;
-
-extern struct Ibus_data ibus_data;
 
 
 void setup();
@@ -45,14 +43,11 @@ void setup_sensors();
 
 bool init_sensors();
 
-bool readIbus();
-
 void calibrate();
 
 void start_calibration_engine();
 
-void say_hello();
 
 
-void handle_ibus_update();
+
 

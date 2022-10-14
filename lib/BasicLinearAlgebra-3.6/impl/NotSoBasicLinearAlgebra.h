@@ -13,9 +13,9 @@ inline void bla_swap(T &a, T &b)
 template <int dim, class MemT>
 struct LUDecomposition
 {
-    bool singular;
+    bool singular = false;
     typename MemT::elem_t parity;
-    Permutation<dim, typename MemT::elem_t> permutation;
+    Permutation<dim, typename MemT::elem_t> permutation = {};
     LowerTriangleOnesDiagonal<MemT> lower;
     UpperTriangle<MemT> upper;
 

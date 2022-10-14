@@ -6,6 +6,7 @@ bool init_sensors(void)
 {
   if (!lsm9ds1.begin())
   {
+    Serial.println("Oops ... unable to initialize the LSM9DS1. Check your wiring!");
     return false;
   }
   accelerometer = &lsm9ds1.getAccel();

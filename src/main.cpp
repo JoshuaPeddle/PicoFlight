@@ -35,7 +35,7 @@ void setup()
     delay(10);
   }
 #endif
-  delay(1000); // Delay to wait for board to stabilize
+  delay(5000); // Delay to wait for board to stabilize
   debug("Begin setup");
 
   pinMode(LED_BUILTIN, OUTPUT); // Setup pins
@@ -51,6 +51,11 @@ void setup()
   debug("Filter started");
 
   debug("starting lsm9ds1");
+  
+  Wire.setSDA(12);
+  Wire.setSCL(13);
+  //Wire.setClock(400000L);
+  Wire.begin();
   if (init_sensors())
   {
     setup_sensors();
@@ -81,6 +86,7 @@ void setup()
 
   timestamp = millis();
   debug("Finished setup");
+  digitalWrite(LED_BUILTIN, HIGH); // Led off
 }
 
 unsigned long last_gps_check = 0; // When the last actual check of the buttons physical states was
@@ -111,10 +117,52 @@ void check_gps()
     debug("");
   }
 }
+unsigned long last_print = 0;
+sensors_event_t accel, mag, gyro, temp;
+void dump_pos(){
+
+  
+  if (millis() - last_print < 16.7) //60HZ
+  {
+    return;
+  }
+  lsm9ds1.getEvent(&accel, &mag, &gyro, &temp);
+  last_print = millis();
+  Serial.print("Accelerometer:");
+  Serial.print(accel.acceleration.x);
+  Serial.print(" ,  ");
+  Serial.print(accel.acceleration.y);
+  Serial.print(" ,  ");
+  Serial.print(accel.acceleration.z);
+  Serial.print("");
+
+  Serial.print("Magnetometer:");
+  Serial.print(mag.magnetic.x);
+  Serial.print(" ,  ");
+  Serial.print(mag.magnetic.y);
+  Serial.print(" ,  ");
+  Serial.print(mag.magnetic.z);
+  Serial.print("");
+
+  Serial.print("Gyroscope:");
+  Serial.print(gyro.gyro.x);
+  Serial.print(" ,  ");
+  Serial.print(gyro.gyro.y);
+  Serial.print(" ,  ");
+  Serial.print(gyro.gyro.z);
+  Serial.print("");
+
+  Serial.print("Temperature:");
+  Serial.print(temp.temperature);
+  debug("");
+}
+
+
 int j = 0;
 unsigned long last_time = 0;
 void loop()
 {
+  dump_pos();
   check_gps();
   check_button(); // HELD, NO_PRESS, SHORT_PRESS, LONG_PRESS(LONG_PRESS_MS), PRESS
   if (readIbus())

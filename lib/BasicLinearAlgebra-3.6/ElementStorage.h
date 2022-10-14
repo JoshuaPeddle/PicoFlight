@@ -84,7 +84,8 @@ struct Sparse
         // Calculate the hash by taking the modulo of the key with the tableSize
         int hash = key % tableSize;
 
-        const HashItem *item;
+        // Fix uninitialized entries
+        const HashItem *item = nullptr;
 
         // Find a item with a key matching the input key
         for (int i = 0; i < tableSize; i++)
@@ -105,6 +106,10 @@ struct Sparse
             {
                 break;
             }
+        }
+        // Added fix for when item is not in the table.
+        if (item == nullptr){
+            return Sparse<cols, tableSize, ElemT>::outOfMemory;
         }
 
         // If we landed on a matching key then we're done!
