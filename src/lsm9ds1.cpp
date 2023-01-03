@@ -8,6 +8,7 @@ bool init_sensors(void)
   {
     return false;
   }
+  delay(100);
   accelerometer = &lsm9ds1.getAccel();
   gyroscope = &lsm9ds1.getGyro();
   magnetometer = &lsm9ds1.getMag();
