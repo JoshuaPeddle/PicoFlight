@@ -39,22 +39,6 @@ def plot_euler(euler):
     plt.pause(0.0001)
     plt.clf()
 
-def plot_euler_lines(euler):
-    # Plot the Euler angles
-    pitch_array.append(euler[1]* 57.2958)
-    roll_array.append(euler[0]* 57.2958)
-    yaw_array.append(euler[2]* 57.2958)
-    plt.plot(pitch_array, label="Pitch")
-    plt.plot(roll_array, label="Roll")
-    #plt.plot(yaw_array, label="Yaw")
-    plt.legend()
-    plt.draw()
-    plt.ylim(-100, 100)
-    plt.pause(0.0001)
-    plt.clf()
-
-
-
 
 def toEuler(Q):
     # Convert the quaternion to Euler angles
