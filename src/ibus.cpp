@@ -74,7 +74,7 @@ bool readIbus()
     ibus_data.c_6 = new_data.c_6;
     updated = true;
   }
-  if ((millis() - last_ibus_print) < TIME_BETWEEN_IBUS_PRINTS || TIME_BETWEEN_IBUS_PRINTS == -1)
+  if ((int)(millis() - last_ibus_print) < TIME_BETWEEN_IBUS_PRINTS || TIME_BETWEEN_IBUS_PRINTS == -1)
   {
     return updated;
   }
