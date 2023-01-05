@@ -44,9 +44,9 @@ void do_stuff()
     // If you really need the inverse of A you can still compute it and calculate x with it:
     auto A_inv = A;
     Invert(A_inv);
-    BLA::Matrix<6> x_Ainvb = A_inv * b;
+    //BLA::Matrix<6> x_Ainvb = A_inv * b;
 
-    //Serial << "x (via inverse A): " << x_Ainvb;
+    
 
     // Fun fact though, we actually calculate A_inv by running LUDecompose then calling LUSolve for each column in A.
     // This is actually no less efficient than other methods for calculating the inverse.
