@@ -13,17 +13,55 @@ Servo rudder;
 
 IBusBM IBus;
 
+
 // 9 DOF SENSOR and AHRS
 Adafruit_LSM9DS1 lsm9ds1 = Adafruit_LSM9DS1();
 
 Adafruit_Sensor_Calibration_EEPROM cal;
 
-// Adafruit_NXPSensorFusion filter; // slowest
-// Adafruit_Madgwick filter;  // faster than NXP
-Adafruit_Mahony filter; // fastest/smalleset
+//Adafruit_NXPSensorFusion filter; // slowest
+Adafruit_Madgwick filter;  // faster than NXP
+//Adafruit_Mahony filter; // fastest/smalleset
 
 NMEAGPS gps; // This parses the GPS characters
 gps_fix fix; // This holds on to the latest values
+
+
+// This function prints a specifically formatted version of the state of the ststem.
+// This is read by the various python tools available 
+void python_debug()
+{
+  // 
+  
+  sensors_event_t accel, mag, gyro, temp;
+  lsm9ds1.getEvent(&accel, &mag, &gyro, &temp);
+  Serial.print("A ");
+  Serial.print(accel.acceleration.x);  // m/s^2
+  Serial.print(" | ");
+  Serial.print(accel.acceleration.y);
+  Serial.print(" | ");
+  Serial.print(accel.acceleration.z);
+  Serial.println(" -");
+
+
+  Serial.print("M ");
+  Serial.print(mag.magnetic.x); // gauss
+  Serial.print(" | ");
+  Serial.print(mag.magnetic.y);
+  Serial.print(" | ");
+  Serial.print(mag.magnetic.z);
+  Serial.println(" -");
+
+  Serial.print("G ");
+  Serial.print(gyro.gyro.x);  // dps
+  Serial.print(" | ");
+  Serial.print(gyro.gyro.y);
+  Serial.print(" | ");
+  Serial.print(gyro.gyro.z);
+  Serial.println(" -");
+}
+
+
 
 uint32_t timestamp;
 void setup()
@@ -32,10 +70,10 @@ void setup()
 #ifdef DEBUG
   while (!Serial)
   {
-    delay(10);
+    ;;
   }
 #endif
-  delay(1000); // Delay to wait for board to stabilize
+  delay(2000); // Delay to wait for board to stabilize
   debug("Begin setup");
 
   pinMode(LED_BUILTIN, OUTPUT); // Setup pins
@@ -44,11 +82,17 @@ void setup()
   IBus.begin(Serial1, IBUSBM_NOTIMER); // iBUS connected to Serial1 RX pin
   debug("IBus started");
 
-  start_calibration_engine();
+  //start_calibration_engine();
   debug("Calibration Engine started");
 
+
   filter.begin(FILTER_UPDATE_RATE_HZ);
+  filter.setBeta(FILTER_BETA); // 1.0f is default, 0.1f is very smooth, 10.0f is very responsive
+  
   debug("Filter started");
+  Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
+  Wire.setSDA(20);
+  Wire.setSCL(21);
 
   debug("starting lsm9ds1");
   if (init_sensors())
@@ -76,8 +120,8 @@ void setup()
   esc.set_esc_pulse(1000);
   delay(500);
 
-  debug("Attach GPS");
-  gpsPort.begin(9600);
+  //debug("Attach GPS");
+  //gpsPort.begin(9600);
 
   timestamp = millis();
   debug("Finished setup");
@@ -111,11 +155,65 @@ void check_gps()
     debug("");
   }
 }
+
+unsigned long last_update = millis();
+void update_filter()
+{
+
+  if ((millis() - last_update) < (1000 / FILTER_UPDATE_RATE_HZ)) {
+    return;
+  }
+  last_update = millis();
+
+  float roll, pitch, heading;
+  float gx, gy, gz;
+
+  sensors_event_t accel, gyro, mag;
+  accelerometer->getEvent(&accel);
+  gyroscope->getEvent(&gyro);
+  magnetometer->getEvent(&mag);
+
+  cal.calibrate(mag);
+  cal.calibrate(accel);
+  cal.calibrate(gyro);
+
+  // Gyroscope needs to be converted from Rad/s to Degree/s
+  // the rest are not unit-important
+  gx = gyro.gyro.x * SENSORS_RADS_TO_DPS;
+  gy = gyro.gyro.y * SENSORS_RADS_TO_DPS;
+  gz = gyro.gyro.z * SENSORS_RADS_TO_DPS;
+  filter.update(gx, gy, gz, 
+                accel.acceleration.x, accel.acceleration.y, accel.acceleration.z, 
+                mag.magnetic.x, mag.magnetic.y, mag.magnetic.z);
+
+
+  static uint8_t print_counter = 0;
+  // only print the calculated output once in a while
+  if (print_counter++ <= PRINT_EVERY_N_UPDATES) {
+    return;
+  }
+  // reset the counter
+  print_counter = 0;
+
+  // print the heading, pitch and roll
+  roll = filter.getRoll();
+  pitch = filter.getPitch();
+  //heading = filter.getYaw();
+
+  Serial.print("P ");
+  Serial.println(pitch);
+  Serial.print("R ");
+  Serial.println(roll);
+}
+
+
+
 int j = 0;
-unsigned long last_time = 0;
+unsigned long debug_time_last_time = 0;
 void loop()
 {
-  check_gps();
+  
+  //check_gps();
   check_button(); // HELD, NO_PRESS, SHORT_PRESS, LONG_PRESS(LONG_PRESS_MS), PRESS
   if (readIbus())
   {
@@ -125,11 +223,16 @@ void loop()
 
   IBus.loop(); // Must be called once a loop
 
+
+  update_filter();
+
 #ifdef DEBUG_TIME
-  if (millis() > last_time + 1000)
+  if (millis() > debug_time_last_time + 1000)
   {
-    last_time = millis();
+    debug_time_last_time = millis();
     debug((int)(j / 1000));
+    //python_debug();
+    Serial.printf("Core temperature: %2.1fC\n", analogReadTemp());
     j = 0;
   }
   else
