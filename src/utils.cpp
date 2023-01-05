@@ -1,4 +1,5 @@
 #include "utils.h"
+#define DEBUG
 
 
 void debug(const String str)
