@@ -3,7 +3,7 @@
 #include <Arduino.h>
 // IBUS receiver
 #define IBUSBM_NOTIMER 1              // no timer interrupt used
-#define TIME_BETWEEN_IBUS_PRINTS 1000 // How long to wait before debugging the IBUS receiver
+#define TIME_BETWEEN_IBUS_PRINTS -1 // How long to wait before debugging the IBUS receiver in ms, -1 for off
 #include <IBusBM.h>
 #include "utils.h"
 #include "pins.h"
