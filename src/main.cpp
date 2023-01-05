@@ -165,7 +165,7 @@ void update_filter()
   }
   last_update = millis();
 
-  float roll, pitch, heading;
+  float roll, pitch;
   float gx, gy, gz;
 
   sensors_event_t accel, gyro, mag;
