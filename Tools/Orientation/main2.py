@@ -17,29 +17,34 @@ lsmdata = lsmData()
 plt.ion()
 plt.show()
 
-pitch_array = [1]
-roll_array = [1]
+pitch_array = [1.0, 2.0, 3.0]
+roll_array = [1.0]
 
-def plot_euler(euler):
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+line1, = ax.plot(pitch_array, label="Pitch")
+line2, = ax.plot(roll_array, label="Roll")
+
+plt.ylim(-20, 20)
+
+def plot_euler2(euler):
     # Plot the Euler angles
-    #pitch_array.append(.8*(euler[0]* 57.2958) + .2*(pitch_array[-1]))
-    #roll_array.append(.8*(euler[1]* 57.2958)+ .2*(roll_array[-1]))
 
     pitch_array.append(float(euler[0]))
     roll_array.append(float(euler[1]))
 
-    plt.plot(pitch_array, label="Pitch")
-    #print(euler)
-    plt.plot(roll_array, label="Roll")
+    line1.set_data( range(len(pitch_array)), pitch_array)
 
-    plt.legend()
-    plt.draw()
-    plt.ylim(-100, 100)
+
+    line2.set_data(range(len(roll_array)), roll_array)
+
     plt.xlim(len(pitch_array)-100, len(pitch_array))
-    plt.pause(0.0001)
-    plt.clf()
+    fig.canvas.draw()
+    fig.canvas.flush_events()
 
-    
+
+
 with serial.Serial('COM7', 115200, timeout=1) as ser:
     while True:
 
@@ -74,7 +79,31 @@ with serial.Serial('COM7', 115200, timeout=1) as ser:
 
         if all(lsmdata.updated):
             # Filter the data
-            plot_euler([lsmdata.pitch ,lsmdata.roll])
+            plot_euler2([lsmdata.pitch ,lsmdata.roll])
             lsmdata.updated = [False, False]
 
         
+
+""" Old plotting function
+
+
+
+def plot_euler(euler):
+    # Plot the Euler angles
+    #pitch_array.append(.8*(euler[0]* 57.2958) + .2*(pitch_array[-1]))
+    #roll_array.append(.8*(euler[1]* 57.2958)+ .2*(roll_array[-1]))
+
+    pitch_array.append(float(euler[0]))
+    roll_array.append(float(euler[1]))
+
+    plt.plot(pitch_array, label="Pitch")
+    #print(euler)
+    plt.plot(roll_array, label="Roll")
+
+    plt.legend()
+    plt.draw()
+    plt.ylim(-100, 100)
+    plt.xlim(len(pitch_array)-100, len(pitch_array))
+    plt.pause(0.0001)
+    plt.clf()
+"""
