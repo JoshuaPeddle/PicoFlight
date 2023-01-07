@@ -1,7 +1,10 @@
-#include "main.h"
+
+#include "lsm9ds1.h"
 
 Adafruit_Sensor *accelerometer, *gyroscope, *magnetometer;
-
+Adafruit_LSM9DS1 lsm9ds1 = Adafruit_LSM9DS1();
+ Adafruit_Sensor_Calibration_EEPROM cal;
+ 
 bool init_sensors(void)
 {
   if (!lsm9ds1.begin())
