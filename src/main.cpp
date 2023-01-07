@@ -14,10 +14,6 @@ Servo rudder;
 IBusBM IBus;
 
 
-// 9 DOF SENSOR and AHRS
-Adafruit_LSM9DS1 lsm9ds1 = Adafruit_LSM9DS1();
-
-Adafruit_Sensor_Calibration_EEPROM cal;
 
 //Adafruit_NXPSensorFusion filter; // slowest
 Adafruit_Madgwick filter;  // faster than NXP
@@ -187,7 +183,7 @@ void update_filter()
                 mag.magnetic.x, mag.magnetic.y, mag.magnetic.z);
 
 
-  static uint8_t print_counter = 0;
+  static uint16_t print_counter = 0;
   // only print the calculated output once in a while
   if (print_counter++ <= PRINT_EVERY_N_UPDATES) {
     return;
@@ -204,17 +200,44 @@ void update_filter()
   Serial.println(pitch);
   Serial.print("R ");
   Serial.println(roll);
+
 }
 
+void handle_button_press(int press)
+{
 
+  // Create switch to handle
+  switch (press)
+  {
+  case NO_PRESS:
+
+    // No button press
+    break;
+  case SHORT_PRESS:
+
+    // Short press
+    break;
+  case LONG_PRESS:
+
+    // Long press
+    break;
+  case HELD:
+    // Held
+    break;
+  default:
+    break;
+  }
+}
 
 int j = 0;
 unsigned long debug_time_last_time = 0;
 void loop()
 {
   
-  //check_gps();
-  check_button(); // HELD, NO_PRESS, SHORT_PRESS, LONG_PRESS(LONG_PRESS_MS), PRESS
+  //check_gps();   // RENABLE
+
+  handle_button_press(check_button());// HELD, NO_PRESS, SHORT_PRESS, LONG_PRESS(LONG_PRESS_MS), PRESS
+
   if (readIbus())
   {
     // New ibus data. Update servos and esc
@@ -230,9 +253,7 @@ void loop()
   if (millis() > debug_time_last_time + 1000)
   {
     debug_time_last_time = millis();
-    debug((int)(j / 1000));
-    //python_debug();
-    Serial.printf("Core temperature: %2.1fC\n", analogReadTemp());
+    Serial.printf("loops per ms: %i Core temperature: %2.1fC\n",(int)(j / 1000),  analogReadTemp());
     j = 0;
   }
   else
