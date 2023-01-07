@@ -17,5 +17,10 @@ extern IBusBM IBus;
 extern struct Ibus_data ibus_data;
 
 
+bool readIbus();
+
+bool data_updated(const Ibus_data& received, const Ibus_data& old);
+
+void handle_ibus_update();
 
 #endif
