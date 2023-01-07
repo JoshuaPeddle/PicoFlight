@@ -15,13 +15,10 @@
 #include <Adafruit_LSM9DS1.h>
 
 
-
 // 9 DOF SENSOR and AHRS
 extern Adafruit_LSM9DS1 lsm9ds1;
 
 extern Adafruit_Sensor_Calibration_EEPROM cal;
-
-
 
 
 
