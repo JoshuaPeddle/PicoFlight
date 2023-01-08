@@ -9,6 +9,7 @@
 #include "esc.h"
 #include "button.h"
 #include "lsm9ds1.h"
+#include "autopilot.h"
 
 
 #define DEBUG
@@ -35,6 +36,7 @@ void setup();
 
 void loop();
 
+void auto_level();
 
 void handle_button_press(int press);
 

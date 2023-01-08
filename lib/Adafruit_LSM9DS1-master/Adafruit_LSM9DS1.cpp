@@ -460,7 +460,7 @@ void Adafruit_LSM9DS1::getTempEvent(sensors_event_t *event,
   event->type = SENSOR_TYPE_AMBIENT_TEMPERATURE;
   event->timestamp = timestamp;
   // This is just a guess since the staring point (21C here) isn't documented :(
-  event->temperature = 21.0 + (float)temperature / 8;
+  event->temperature = 21.0f + (float)temperature / 8;
   // event->temperature /= LSM9DS1_TEMP_LSB_DEGREE_CELSIUS;
 }
 

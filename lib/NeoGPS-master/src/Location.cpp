@@ -56,11 +56,11 @@ float Location_t::DistanceRadians
 
   // Haversine calculation from http://www.movable-type.co.uk/scripts/latlong.html
   float dLat      = dLatL * RAD_PER_DEG * LOC_SCALE;
-  float haverDLat = sin(dLat/2.0);
+  float haverDLat = sin(dLat/2.0f);
   haverDLat *= haverDLat; // squared
   
   float dLon      = dLonL * RAD_PER_DEG * LOC_SCALE;
-  float haverDLon = sin(dLon/2.0);
+  float haverDLon = sin(dLon/2.0f);
   haverDLon *= haverDLon; // squared
   
   float lat1 = p1.latF();
@@ -104,7 +104,7 @@ float Location_t::BearingTo( const Location_t & p1, const Location_t & p2 )
     //  VERY close together.  Just use equirect approximation with precise integers.
     x       = dLonL * cosLat1;
     y       = dLatL;
-    bearing = PI/2.0 - atan2(y, x);
+    bearing =(float) PI/2.0f - atan2(y, x);
 
   } else {
     float lat2    = p2.lat() * RAD_PER_DEG * LOC_SCALE;
@@ -114,8 +114,8 @@ float Location_t::BearingTo( const Location_t & p1, const Location_t & p2 )
     bearing       = atan2(y, x);
   }
 
-  if (bearing < 0.0)
-    bearing += TWO_PI;
+  if (bearing < 0.0f)
+    bearing += (float)TWO_PI;
 
   return bearing;
 

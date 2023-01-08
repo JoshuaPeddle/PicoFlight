@@ -22,6 +22,7 @@ Adafruit_Madgwick filter;  // faster than NXP
 NMEAGPS gps; // This parses the GPS characters
 gps_fix fix; // This holds on to the latest values
 
+bool auto_leveling = false;
 
 // This function prints a specifically formatted version of the state of the ststem.
 // This is read by the various python tools available 
@@ -201,6 +202,8 @@ void update_filter()
   Serial.print("R ");
   Serial.println(roll);
 
+  auto_level();
+
 }
 
 void handle_button_press(int press)
@@ -218,7 +221,7 @@ void handle_button_press(int press)
     // Short press
     break;
   case LONG_PRESS:
-
+    auto_leveling = !auto_leveling;
     // Long press
     break;
   case HELD:
@@ -227,6 +230,40 @@ void handle_button_press(int press)
   default:
     break;
   }
+}
+
+
+void auto_level()
+{
+  if (!auto_leveling)
+  {
+    return;
+  }
+  float roll_zero = 0;
+  float roll, pitch;
+  float delta_roll;
+  float roll_servo;
+  int servo_zero_point = 1500;
+  int servo_max = 2000;
+  int servo_min = 1000;
+  int servo_range = servo_max - servo_min;
+  int servo_range_half = servo_range / 2;
+
+  roll = filter.getRoll();
+  pitch = filter.getPitch();
+
+  delta_roll = roll - roll_zero;
+
+  // print the delta roll
+  Serial.print("DR ");
+  Serial.println(delta_roll);
+
+  int roll_offset = -delta_roll * AUTO_LEVEL_ALPHA;
+
+  // print the roll offset
+  Serial.print("RO "); 
+  Serial.println(roll_offset);
+
 }
 
 int j = 0;
@@ -248,6 +285,8 @@ void loop()
 
 
   update_filter();
+
+  
 
 #ifdef DEBUG_TIME
   if (millis() > debug_time_last_time + 1000)

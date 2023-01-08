@@ -59,13 +59,13 @@ LUDecomposition<dim, MemT> LUDecompose(Matrix<dim, dim, MemT> &A)
         }
 
         // No nonzero largest element.
-        if (largest_elem == 0.0)
+        if (largest_elem == 0.0f)
         {
             decomp.singular = true;
             return decomp;
         }
 
-        row_scale[i] = 1.0 / largest_elem;
+        row_scale[i] = 1.0f / largest_elem;
     }
 
     // This is the loop over columns of Crout’s method.
@@ -125,7 +125,7 @@ LUDecomposition<dim, MemT> LUDecompose(Matrix<dim, dim, MemT> &A)
             row_scale[argmax] = row_scale[j];
         }
 
-        if (A(j, j) == 0.0)
+        if (A(j, j) == 0.0f)
         {
             decomp.singular = true;
             return decomp;
@@ -134,7 +134,7 @@ LUDecomposition<dim, MemT> LUDecompose(Matrix<dim, dim, MemT> &A)
         if (j != dim)
         {
             // Now, finally, divide by the pivot element.
-            typename MemT::elem_t pivot_inv = 1.0 / A(j, j);
+            typename MemT::elem_t pivot_inv = 1.0f / A(j, j);
 
             for (int i = j + 1; i < dim; ++i)
             {

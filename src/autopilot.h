@@ -4,8 +4,4 @@
 
 
 
-
-// This is the main autopilot class
-class Autopilot
-{
-    
+#define AUTO_LEVEL_ALPHA 10
