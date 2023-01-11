@@ -6,7 +6,46 @@ bool auto_leveling = false;
 int roll_offset = 0;
 
 
+struct filterData {
+  float roll;
+  float pitch;
+  float yaw;
+};
+// A stack class to hold the filter data. Number held is defined by the
+// AUTO_LEVELING_SMOOTHING
+class FilterStack {
+  public:
+    FilterStack() {
+      _index = 0;
+    }
+    void push(filterData data) {
+      _data[_index] = data;
+      _index++;
+      if (_index >= AUTO_LEVELING_SMOOTHING) {
+        _index = 0;
+      }
+    }
+    filterData getAverage() {
+      filterData average;
+      average.roll = 0;
+      average.pitch = 0;
+      average.yaw = 0;
+      for (int i = 0; i < AUTO_LEVELING_SMOOTHING; i++) {
+        average.roll += _data[i].roll;
+        average.pitch += _data[i].pitch;
+        average.yaw += _data[i].yaw;
+      }
+      average.roll /= AUTO_LEVELING_SMOOTHING;
+      average.pitch /= AUTO_LEVELING_SMOOTHING;
+      average.yaw /= AUTO_LEVELING_SMOOTHING;
+      return average;
+    }
+  private:
+    filterData _data[AUTO_LEVELING_SMOOTHING];
+    int _index;
+};
 
+FilterStack filterStack;
 unsigned long last_filter_update = millis();
 void update_filter()
 {
@@ -16,7 +55,7 @@ void update_filter()
   }
   last_filter_update = millis();
 
-  float roll, pitch;
+  float roll, pitch, heading;
   float gx, gy, gz;
 
   sensors_event_t accel, gyro, mag;
@@ -37,6 +76,19 @@ void update_filter()
                 accel.acceleration.x, accel.acceleration.y, accel.acceleration.z, 
                 mag.magnetic.x, mag.magnetic.y, mag.magnetic.z);
 
+  // print the heading, pitch and roll
+  roll = filter.getRoll();
+  pitch = filter.getPitch();
+  heading = filter.getYaw();
+
+  // Update the filter stack
+  filterData data;
+  data.roll = roll;
+  data.pitch = pitch;
+  data.yaw = heading;
+  filterStack.push(data);
+
+
   auto_level();
   static uint16_t print_counter = 0;
   // only print the calculated output once in a while
@@ -45,22 +97,17 @@ void update_filter()
   }
   // reset the counter
   print_counter = 0;
-
-  // print the heading, pitch and roll
-  roll = filter.getRoll();
-  pitch = filter.getPitch();
-  //heading = filter.getYaw();
-
+  filterData filtered_data = filterStack.getAverage();
   Serial.print("P ");
-  Serial.println(pitch);
+  Serial.println(filtered_data.pitch);
   Serial.print("R ");
-  Serial.println(roll);
+  Serial.println(filtered_data.roll);
+  Serial.print("Y ");
+  Serial.println(filtered_data.yaw);
 
 
 
 }
-
-
 
 
 void auto_level()
@@ -79,8 +126,8 @@ void auto_level()
   int servo_range = servo_max - servo_min;
   int servo_range_half = servo_range / 2;
 
-  roll = filter.getRoll();
-  pitch = filter.getPitch();
+  roll = filterStack.getAverage().roll;
+  pitch = filterStack.getAverage().pitch;
 
   delta_roll = roll - roll_zero;
 
@@ -90,7 +137,5 @@ void auto_level()
 
   roll_offset = -delta_roll * AUTO_LEVEL_ALPHA;
 
-  // Apply the roll offset
-  handle_ibus_update();
 
 }

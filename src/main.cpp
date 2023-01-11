@@ -70,6 +70,7 @@ void setup()
   debug("Finished setup");
 }
 
+int loops_since_ibus_loop = 0;
 
 void loop()
 {
@@ -77,24 +78,25 @@ void loop()
   static unsigned long debug_time_last_time = 0;
   //check_gps();   // RENABLE
 
-
   // Check the button for the events defined in button.h
   handle_button_press(check_button());
 
-  // Check if new data was received on the ibus RX
-  if (readIbus())
+  if (loops_since_ibus_loop++ > IBUS_LOOPS_TO_SKIP) //TODO: Smart calculate this according this to current loop time
   {
-    // New ibus data. Update servos and esc
-    handle_ibus_update();
+    loops_since_ibus_loop = 0;
+    IBus.loop();
+    // Check if new data was received on the ibus RX
+    if (readIbus())
+    { /* Handle new ibus data. */
+    }
+
   }
-
-  // Must be called once a loop. TODO: Move to onboard timer
-  IBus.loop(); 
-
 
   // Update the filter using the onbaord sensor data
   update_filter();
 
+  // Update the servos using the filter data
+  write_servos();
   
 #ifdef DEBUG_TIME
   if (millis() > debug_time_last_time + 3000)

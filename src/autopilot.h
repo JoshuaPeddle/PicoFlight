@@ -6,7 +6,8 @@
 
 #define AUTO_LEVEL_ALPHA 10
 
-
+// Number of values to average for auto leveling
+#define AUTO_LEVELING_SMOOTHING 3
 
 extern bool auto_leveling;
 extern int roll_offset;

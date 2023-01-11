@@ -62,6 +62,7 @@ void handle_button_press(int press)
   case SHORT_PRESS:
   Serial.println("leveling toggle");
     auto_leveling = !auto_leveling;
+    roll_offset = 0; // Reset the roll offset when leveling is toggled
     // Short press
     break;
   case LONG_PRESS:
