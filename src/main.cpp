@@ -86,11 +86,9 @@ void loop()
     loops_since_ibus_loop = 0;
     IBus.loop();
     // Check if new data was received on the ibus RX
-    if (readIbus())
-    { /* Handle new ibus data. */
-    }
-
+    if (readIbus()){ /* Handle new ibus data. */}
   }
+  
 
   // Update the filter using the onbaord sensor data
   update_filter();
@@ -102,7 +100,6 @@ void loop()
   if (millis() > debug_time_last_time + 3000)
   {
     debug_time_last_time = millis();
-
     Serial.printf("loops per ms: %i Core temperature: %2.1fC\n",(int)(j / 3000), (double) analogReadTemp());
     j = 0;
   }

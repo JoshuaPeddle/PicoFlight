@@ -17,12 +17,16 @@ extern IBusBM IBus;
 
 struct Ibus_data 
 {
-    uint16_t c_1 = 1500;
-    uint16_t c_2 = 1500;
-    uint16_t c_3 = 1000;
-    uint16_t c_4 = 1500;
-    uint16_t c_5 = 1500;
-    uint16_t c_6 = 1500;
+    uint16_t c_1 =  1500;
+    uint16_t c_2 =  1500;
+    uint16_t c_3 =  1000;
+    uint16_t c_4 =  1500;
+    uint16_t c_5 =  1500;
+    uint16_t c_6 =  1500;
+    uint16_t c_7 =  1000;
+    uint16_t c_8 =  1000;
+    uint16_t c_9 =  1000;
+    uint16_t c_10 = 1000;
     int get_channel_value(int channel)
     {
         switch (channel)
@@ -44,6 +48,18 @@ struct Ibus_data
             break;
         case 6:
             return this->c_6;
+            break;
+        case 7:
+            return this->c_7;
+            break;
+        case 8:
+            return this->c_8;
+            break;
+        case 9:
+            return this->c_9;
+            break;
+        case 10:
+            return this->c_10;
             break;
         default:
             return 0;
