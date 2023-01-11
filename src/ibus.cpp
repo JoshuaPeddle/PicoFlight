@@ -1,6 +1,7 @@
 #include "ibus.h"
 
 
+IBusBM IBus;
 
 
 struct Ibus_data 
@@ -99,8 +100,8 @@ void handle_ibus_update()
     //debug("IBUS updated");
     elevator.writeMicroseconds(ibus_data.get_channel_value(ELEVATOR_IBUS_CHANNEL));
 #ifdef DUAL_AILERON
-    left_aileron.writeMicroseconds(ibus_data.get_channel_value(LEFT_AILERON_IBUS_CHANNEL) - roll_offset);
-    right_aileron.writeMicroseconds(ibus_data.get_channel_value(RIGHT_AILERON_IBUS_CHANNEL) + roll_offset);
+    left_aileron.writeMicroseconds(ibus_data.get_channel_value(LEFT_AILERON_IBUS_CHANNEL) + roll_offset);
+    right_aileron.writeMicroseconds(ibus_data.get_channel_value(RIGHT_AILERON_IBUS_CHANNEL) - roll_offset);
     //Serial.println(ibus_data.get_channel_value(RIGHT_AILERON_IBUS_CHANNEL) + roll_offset);
 #else
     aileron.writeMicroseconds(ibus_data.get_channel_value(AILERON_IBUS_CHANNEL));

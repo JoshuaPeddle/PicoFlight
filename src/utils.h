@@ -11,4 +11,6 @@ void debug(int str);
 void blink(int del);
 
 void say_hello();
+
+void python_debug();
 #endif

@@ -47,3 +47,31 @@ int check_button(){
     return NO_PRESS;
 
 }
+
+
+void handle_button_press(int press)
+{
+
+  // Create switch to handle
+  switch (press)
+  {
+  case NO_PRESS:
+
+    // No button press
+    break;
+  case SHORT_PRESS:
+  Serial.println("leveling toggle");
+    auto_leveling = !auto_leveling;
+    // Short press
+    break;
+  case LONG_PRESS:
+    // Long press
+    break;
+  case HELD:
+    // Held
+    break;
+  default:
+    break;
+  }
+}
+
