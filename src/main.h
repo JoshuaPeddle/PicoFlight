@@ -23,7 +23,7 @@
 
 
 
-extern Adafruit_Sensor *accelerometer, *gyroscope, *magnetometer;
+
 
 //extern Adafruit_LSM9DS1 lsm9ds1;
 

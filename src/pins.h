@@ -33,4 +33,7 @@
 // IBUS receiver setup
 #define IBUS_RX_PIN 13
 
+#define LSM9DS1_SDA 20
+#define LSM9DS1_SCL 21
+
 #endif

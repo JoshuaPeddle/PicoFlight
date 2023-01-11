@@ -2,7 +2,8 @@
 #define SERVO_H
 #include <Arduino.h>
 #include <Servo.h>
-
+#include "esc.h"
+#include "pins.h"
 
 extern Servo elevator;
 #ifdef DUAL_AILERON

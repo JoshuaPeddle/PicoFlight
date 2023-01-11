@@ -1,16 +1,17 @@
 #include "ibus.h"
 
 
+IBusBM IBus;
 
 
 struct Ibus_data 
 {
-    uint16_t c_1 = 0;
-    uint16_t c_2 = 0;
-    uint16_t c_3 = 0;
-    uint16_t c_4 = 0;
-    uint16_t c_5 = 0;
-    uint16_t c_6 = 0;
+    uint16_t c_1 = 1500;
+    uint16_t c_2 = 1500;
+    uint16_t c_3 = 1000;
+    uint16_t c_4 = 1500;
+    uint16_t c_5 = 1500;
+    uint16_t c_6 = 1500;
     int get_channel_value(int channel)
     {
         switch (channel)
@@ -62,6 +63,10 @@ bool readIbus()
   new_data.c_4 = IBus.readChannel(3);
   new_data.c_5 = IBus.readChannel(4);
   new_data.c_6 = IBus.readChannel(5);
+  if (new_data.c_1 == 0 || new_data.c_2 == 0 || new_data.c_3 == 0 || new_data.c_4 == 0 || new_data.c_5 == 0 || new_data.c_6 == 0)
+  {
+    return false;
+  }
 
   // If the values have changed, update the struct and set the return value to true
   if (data_updated(new_data, ibus_data) == true)
@@ -95,14 +100,15 @@ void handle_ibus_update()
     //debug("IBUS updated");
     elevator.writeMicroseconds(ibus_data.get_channel_value(ELEVATOR_IBUS_CHANNEL));
 #ifdef DUAL_AILERON
-    left_aileron.writeMicroseconds(ibus_data.get_channel_value(LEFT_AILERON_IBUS_CHANNEL));
-    right_aileron.writeMicroseconds(ibus_data.get_channel_value(RIGHT_AILERON_IBUS_CHANNEL));
+    left_aileron.writeMicroseconds(ibus_data.get_channel_value(LEFT_AILERON_IBUS_CHANNEL) + roll_offset);
+    right_aileron.writeMicroseconds(ibus_data.get_channel_value(RIGHT_AILERON_IBUS_CHANNEL) - roll_offset);
+    //Serial.println(ibus_data.get_channel_value(RIGHT_AILERON_IBUS_CHANNEL) + roll_offset);
 #else
     aileron.writeMicroseconds(ibus_data.get_channel_value(AILERON_IBUS_CHANNEL));
 #endif
     rudder.writeMicroseconds(ibus_data.get_channel_value(RUDDER_IBUS_CHANNEL));
 
-    esc.set_esc_pulse((short)ibus_data.get_channel_value(THROTTLE_IBUS_CHANNEL));
+    esc.set_esc_pulse(ibus_data.get_channel_value(THROTTLE_IBUS_CHANNEL));
     //debug(res);
     //debug(ibus_data.get_channel_value(THROTTLE_IBUS_CHANNEL));
 }

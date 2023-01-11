@@ -3,7 +3,13 @@
 
 Adafruit_Sensor *accelerometer, *gyroscope, *magnetometer;
 Adafruit_LSM9DS1 lsm9ds1 = Adafruit_LSM9DS1();
- Adafruit_Sensor_Calibration_EEPROM cal;
+Adafruit_Sensor_Calibration_EEPROM cal;
+
+
+//Adafruit_NXPSensorFusion filter; // slowest
+Adafruit_Madgwick filter;  // faster than NXP
+//Adafruit_Mahony filter; // fastest/smalleset
+
  
 bool init_sensors(void)
 {

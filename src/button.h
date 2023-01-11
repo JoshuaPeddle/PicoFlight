@@ -2,6 +2,7 @@
 #define BUTTON_H
 #include <Arduino.h>
 #include "utils.h"
+#include "autopilot.h"
 
 
 // Button defines
