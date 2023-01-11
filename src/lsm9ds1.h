@@ -8,7 +8,7 @@
 #define ADAFRUIT_SENSOR_CALIBRATION_USE_EEPROM 1
 #define FILTER_UPDATE_RATE_HZ 500  //hz
 #define FILTER_BETA 4.5f //ms
-#define PRINT_EVERY_N_UPDATES 800
+#define PRINT_EVERY_N_UPDATES 1600
 
 #include <Adafruit_Sensor_Calibration.h>
 #include <Adafruit_AHRS.h>

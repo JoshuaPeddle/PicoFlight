@@ -85,6 +85,8 @@ void setup()
 
   filter.begin(FILTER_UPDATE_RATE_HZ);
   filter.setBeta(FILTER_BETA); // 1.0f is default, 0.1f is very smooth, 10.0f is very responsive
+
+  roll_offset = 0;
   
   debug("Filter started");
   Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
@@ -183,7 +185,7 @@ void update_filter()
                 accel.acceleration.x, accel.acceleration.y, accel.acceleration.z, 
                 mag.magnetic.x, mag.magnetic.y, mag.magnetic.z);
 
-
+  auto_level();
   static uint16_t print_counter = 0;
   // only print the calculated output once in a while
   if (print_counter++ <= PRINT_EVERY_N_UPDATES) {
@@ -202,7 +204,7 @@ void update_filter()
   Serial.print("R ");
   Serial.println(roll);
 
-  auto_level();
+
 
 }
 
@@ -217,11 +219,11 @@ void handle_button_press(int press)
     // No button press
     break;
   case SHORT_PRESS:
-
+  Serial.println("leveling toggle");
+    auto_leveling = !auto_leveling;
     // Short press
     break;
   case LONG_PRESS:
-    auto_leveling = !auto_leveling;
     // Long press
     break;
   case HELD:
@@ -255,14 +257,13 @@ void auto_level()
   delta_roll = roll - roll_zero;
 
   // print the delta roll
-  Serial.print("DR ");
-  Serial.println(delta_roll);
+  //Serial.print("DR ");
+  //Serial.println(delta_roll);
 
-  int roll_offset = -delta_roll * AUTO_LEVEL_ALPHA;
+  roll_offset = -delta_roll * AUTO_LEVEL_ALPHA;
 
-  // print the roll offset
-  Serial.print("RO "); 
-  Serial.println(roll_offset);
+  // Apply the roll offset
+  handle_ibus_update();
 
 }
 
@@ -283,16 +284,14 @@ void loop()
 
   IBus.loop(); // Must be called once a loop
 
-
   update_filter();
 
   
-
 #ifdef DEBUG_TIME
-  if (millis() > debug_time_last_time + 1000)
+  if (millis() > debug_time_last_time + 3000)
   {
     debug_time_last_time = millis();
-    Serial.printf("loops per ms: %i Core temperature: %2.1fC\n",(int)(j / 1000),  analogReadTemp());
+    Serial.printf("loops per ms: %i Core temperature: %2.1fC\n",(int)(j / 3000),  analogReadTemp());
     j = 0;
   }
   else

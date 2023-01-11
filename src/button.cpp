@@ -13,7 +13,7 @@ int last_button_state = 0;  // The last physical state of the button. Reported u
 int check_button(){
     unsigned long now = millis();
     if (now < last_check + DELAY_BETWEEN_BUTTON_CHECKS){
-        return last_button_state;
+        return -1;
     }
     last_check = now;
     if (!BOOTSEL && !bootsel_pressed){
