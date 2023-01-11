@@ -8,7 +8,8 @@ class lsmData:
     def __init__(self) -> None:
         self.pitch = 0
         self.roll = 0
-        self.updated = [False, False]
+        self.yaw = 0
+        self.updated = [False, False, False]
 
 parse_errors = 0
 
@@ -19,27 +20,27 @@ plt.show()
 
 pitch_array = [1.0, 2.0, 3.0]
 roll_array = [1.0]
-
+yaw_array = [1.0]
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
 line1, = ax.plot(pitch_array, label="Pitch")
 line2, = ax.plot(roll_array, label="Roll")
+line3, = ax.plot(yaw_array, label="Yaw")
 
-plt.ylim(-20, 20)
+plt.ylim(-90, 90)
 
 def plot_euler2(euler):
     # Plot the Euler angles
 
     pitch_array.append(float(euler[0]))
     roll_array.append(float(euler[1]))
-
+    yaw_array.append(float(euler[2]))
     line1.set_data( range(len(pitch_array)), pitch_array)
-
-
     line2.set_data(range(len(roll_array)), roll_array)
+    line3.set_data(range(len(yaw_array)), yaw_array)
 
-    plt.xlim(len(pitch_array)-100, len(pitch_array))
+    plt.xlim(len(pitch_array)-200, len(pitch_array))
     fig.canvas.draw()
     fig.canvas.flush_events()
 
@@ -57,7 +58,9 @@ with serial.Serial('COM7', 115200, timeout=1) as ser:
             parse_errors+=1
             continue
 
-        #print(line.decode("UTF-8")) 
+        #print(decoded) 
+        if (decoded == ""):
+            continue
         try:
             if (decoded[0] == "P"):
                 pitch = decoded.split(" ")[-1]
@@ -70,6 +73,19 @@ with serial.Serial('COM7', 115200, timeout=1) as ser:
                 roll = decoded.split(" ")[-1]
                 lsmdata.roll = roll
                 lsmdata.updated[1] = True
+                #print("roll: ", lsmdata.roll
+
+            if (decoded[0] == "Y"):
+                
+                yaw = decoded.split(" ")[-1]
+                yaw = float(yaw)
+                # Conver from 0-360 to -90 to 90
+                yaw = yaw /360
+                yaw = yaw * 180
+                yaw = yaw - 90
+                yaw = str(yaw)
+                lsmdata.yaw = yaw
+                lsmdata.updated[2] = True
                 #print("roll: ", lsmdata.roll)
         except ValueError:
             print("parse error")
@@ -79,8 +95,8 @@ with serial.Serial('COM7', 115200, timeout=1) as ser:
 
         if all(lsmdata.updated):
             # Filter the data
-            plot_euler2([lsmdata.pitch ,lsmdata.roll])
-            lsmdata.updated = [False, False]
+            plot_euler2([lsmdata.pitch ,lsmdata.roll, lsmdata.yaw])
+            lsmdata.updated = [False, False, False]
 
         
 
