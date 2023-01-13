@@ -63,10 +63,11 @@ void update_filter()
   gyroscope->getEvent(&gyro);
   magnetometer->getEvent(&mag);
 
+/*
   cal.calibrate(mag);
   cal.calibrate(accel);
   cal.calibrate(gyro);
-
+*/
   // Gyroscope needs to be converted from Rad/s to Degree/s
   // the rest are not unit-important
   gx = gyro.gyro.x * SENSORS_RADS_TO_DPS;

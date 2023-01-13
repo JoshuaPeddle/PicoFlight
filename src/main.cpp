@@ -88,7 +88,7 @@ void loop()
     // Check if new data was received on the ibus RX
     if (readIbus()){ /* Handle new ibus data. */}
   }
-  
+
 
   // Update the filter using the onbaord sensor data
   update_filter();
